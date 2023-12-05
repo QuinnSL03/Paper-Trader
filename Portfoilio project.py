@@ -2,48 +2,48 @@ import pandas as pd
 from decimal import Decimal
 
 class User:
-    def __init__(self, userID):
+    def __init__(self, user_id):
         self.accounts = []
-        self.userID = userID
-    def addAccount(self, account):
+        self.user_id = user_id
+    def add_account(self, account):
         self.accounts.append(account)
 
 class Account:
-    def __init__(self, accountID, balance):
-        self.accountID = accountID
+    def __init__(self, account_id, balance):
+        self.account_id = account_id
         self.balance = balance
-        self.ownedstocks = {}
-    def buyStock(self, stock, quantity):
+        self.owned_stocks = {}
+    def buy_stock(self, stock, quantity):
         #if stock already owned
-        if stock.ticker in self.ownedstocks.keys():
+        if stock.ticker in self.owned_stocks.keys():
             #add quantity 
-            self.ownedstocks[stock.ticker][1] += quantity
-            self.ownedstocks[stock.ticker][2] += stock.price * quantity
+            self.owned_stocks[stock.ticker][1] += quantity
+            self.owned_stocks[stock.ticker][2] += stock.price * quantity
             #add to total cost of stock owned
             
         else:
-            self.ownedstocks[stock.ticker] = [stock, quantity, stock.price*quantity]
+            self.owned_stocks[stock.ticker] = [stock, quantity, stock.price*quantity]
             #add to total cost of stock owned
         
 
-    def sellStock(self, stock_ticker, quantity):
-        if stock_ticker in self.ownedstocks.keys() and self.ownedstocks[stock_ticker][1] >= quantity:
-            self.ownedstocks[stock_ticker][1] = self.ownedstocks[stock_ticker][1] - quantity
-            ##self.balance =+ self.ownedstocks[stock_ticker][0].price * quantity
-            if self.ownedstocks[stock_ticker][1] == 0:
-                self.ownedstocks.pop(stock_ticker)
+    def sell_stock(self, stock_ticker, quantity):
+        if stock_ticker in self.owned_stocks.keys() and self.owned_stocks[stock_ticker][1] >= quantity:
+            self.owned_stocks[stock_ticker][1] = self.owned_stocks[stock_ticker][1] - quantity
+            ##self.balance =+ self.owned_stocks[stock_ticker][0].price * quantity
+            if self.owned_stocks[stock_ticker][1] == 0:
+                self.owned_stocks.pop(stock_ticker)
         else:
             print("Stock or quantity not owned ")
         
     def __str__(self):
         print("Owned stocks: ")
-        if (len(self.ownedstocks) > 0):
-            for n in self.ownedstocks:
-                print(self.ownedstocks[n][0].ticker, "|", self.ownedstocks[n][0].companyName, "|", "Quantity:", self.ownedstocks[n][1], "|", "Total Cost:", "$" + str(self.ownedstocks[n][2]))
+        if (len(self.owned_stocks) > 0):
+            for n in self.owned_stocks:
+                print(self.owned_stocks[n][0].ticker, "|", self.owned_stocks[n][0].company_name, "|", "Quantity:", self.owned_stocks[n][1], "|", "Total Cost:", "$" + str(self.owned_stocks[n][2]))
             
 class Stock:
-    def __init__(self, ticker, price, companyName):
-        self.companyName = companyName
+    def __init__(self, ticker, price, company_name):
+        self.company_name = company_name
         self.ticker = ticker
         self.price = price
     
@@ -75,7 +75,7 @@ class Hashtable:
      
 portfolio1 = Account("ABCD", 300)
 quinn = User("QL23")
-quinn.addAccount(portfolio1)
+quinn.add_account(portfolio1)
 
 
 #Reading CSV data into a dictionary
@@ -91,21 +91,25 @@ for x in tickers:
     if type(x) == 'str':
         hashtbl.set(x, prices[tickers.index(x)])
 
-
-
-##Interface    
+#Interface    
 num = 0
 while num < 5:
-    num = int(input("Enter 2 to buy a stock, Enter 3 to sell a stock, Enter 4 to display account details, Enter 5 to exit: "))              
+    num = int(input("Enter 2 to buy a stock, 3 to sell a stock, 4 to display account details, 5 to open a new account, 6 to sign in to an account"))              
     if num == 2:
         ticker = input("Enter stock ticker to buy: ")
         #Searching through tickers list to find that stock index, faster with hashmap.
-        stockIndex = tickers.index(ticker)
-        price = float(Decimal("".join(d for d in prices[stockIndex] if d.isdigit() or d == '.')))
-        stock = Stock(tickers[stockIndex], price, company_name[stockIndex])
-        portfolio1.buyStock(stock, int(input("Enter quantity: ")))
+        stock_index = tickers.index(ticker)
+        price = float(Decimal("".join(d for d in prices[stock_index] if d.isdigit() or d == '.')))
+        stock = Stock(tickers[stock_index], price, company_name[stock_index])
+        portfolio1.buy_stock(stock, int(input("Enter quantity: ")))
         
     if num == 3:
-        portfolio1.sellStock(input("Enter stock ticker to sell: "), int(input("Enter quantity to sell: ")))
+        portfolio1.sell_stock(input("Enter stock ticker to sell: "), int(input("Enter quantity to sell: ")))
     if num == 4:
         portfolio1.__str__()
+    if num == 5:
+        user_id = input("Enter user id: ")
+        password = input("Enter password: ")
+    if num == 6:
+        user_id = input("Enter user id: ")
+        password = input("Enter password: ")
